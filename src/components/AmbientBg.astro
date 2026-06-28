@@ -1,6 +1,6 @@
 ---
-// AmbientBg.astro — fondo atmosférico del circo
-// Sin líneas tajantes: todo difuso, volumétrico, suave
+// AmbientBg.astro — fondo atmosférico del circo (OPTIMIZADO PARA RENDIMIENTO)
+// Sin blur(), sin clip-path, animaciones aceleradas por hardware.
 ---
 
 <div class="ambient" aria-hidden="true">
@@ -10,96 +10,59 @@
   <div class="halo halo-left"></div>
   <div class="halo halo-right"></div>
 
-  <!-- Focos de escenario: cones amplios y difusos, no líneas -->
+  <!-- Focos de escenario: Creados con gradientes radiales (Cero costo de GPU) -->
   <div class="cone cone-l1"></div>
   <div class="cone cone-l2"></div>
   <div class="cone cone-r1"></div>
   <div class="cone cone-r2"></div>
   <div class="cone cone-top"></div>
 
-  <!-- Estrellas: tamaños variados, algunas con glow propio -->
+  <!-- Estrellas -->
   {[
-    // [top%, left%, size_px, dur_s, delay_s, glow]
-    [8,  5,  1.5, 2.1, 0.0,  false],
-    [12, 18, 2.5, 3.2, 0.4,  true ],
-    [5,  32, 1.2, 1.8, 1.1,  false],
-    [9,  47, 3.0, 2.8, 0.7,  true ],
-    [6,  61, 1.8, 2.4, 1.8,  false],
-    [14, 73, 2.2, 3.5, 0.3,  true ],
-    [7,  85, 1.5, 2.0, 2.2,  false],
-    [3,  93, 2.8, 1.9, 0.9,  true ],
-    [18, 8,  1.2, 3.0, 1.4,  false],
-    [22, 25, 2.0, 2.6, 0.6,  false],
-    [16, 55, 1.6, 1.7, 2.5,  true ],
-    [20, 78, 2.4, 3.1, 0.1,  false],
-    [25, 90, 1.4, 2.3, 1.7,  false],
-    [11, 40, 1.0, 2.9, 3.0,  false],
-    [4,  70, 3.2, 2.2, 0.5,  true ],
-    [30, 15, 1.8, 3.4, 1.2,  false],
-    [28, 50, 1.2, 1.6, 2.8,  false],
-    [33, 82, 2.6, 2.7, 0.2,  true ],
-    [15, 96, 1.4, 3.3, 1.6,  false],
-    [26, 3,  2.0, 2.0, 2.1,  false],
-  ].map(([top, left, size, dur, delay, glow]) => (
+    [12, 18, 2.5, 3.2, 0.4], [9,  47, 3.0, 2.8, 0.7], [14, 73, 2.2, 3.5, 0.3],
+    [3,  93, 2.8, 1.9, 0.9], [16, 55, 1.6, 1.7, 2.5], [4,  70, 3.2, 2.2, 0.5],
+    [33, 82, 2.6, 2.7, 0.2], [22, 25, 2.0, 2.6, 0.6], [8,  5,  1.5, 2.1, 0.0],
+    [5,  32, 1.2, 1.8, 1.1], [25, 90, 1.4, 2.3, 1.7], [28, 50, 1.2, 1.6, 2.8]
+  ].map(([top, left, size, dur, delay]) => (
     <span
-      class={`star ${glow ? 'star--glow' : ''}`}
+      class="star"
       style={`top:${top}%;left:${left}%;width:${size}px;height:${size}px;animation-duration:${dur}s;animation-delay:${delay}s`}
     />
   ))}
 
-  <!-- Partículas de luz flotantes (no confeti que cae — puntos de luz que suben y desaparecen) -->
+  <!-- Partículas de luz flotantes (Sin box-shadow para evitar repaints) -->
   {[
-    { left: 8,  color: '#f1c40e', dur: 7.0, delay: 0.0, size: 3 },
-    { left: 22, color: '#e74d3c', dur: 9.5, delay: 1.2, size: 2 },
-    { left: 35, color: '#3398db', dur: 8.0, delay: 3.1, size: 4 },
-    { left: 50, color: '#f39c12', dur: 6.5, delay: 0.5, size: 2 },
-    { left: 63, color: '#2ecc70', dur: 10.0,delay: 2.3, size: 3 },
-    { left: 75, color: '#ff4fa3', dur: 7.5, delay: 4.0, size: 2 },
-    { left: 88, color: '#f1c40e', dur: 8.5, delay: 1.8, size: 3 },
-    { left: 15, color: '#7a00cc', dur: 9.0, delay: 5.0, size: 2 },
-    { left: 42, color: '#e74d3c', dur: 7.2, delay: 2.7, size: 4 },
-    { left: 58, color: '#3398db', dur: 8.8, delay: 0.9, size: 2 },
-    { left: 70, color: '#2ecc70', dur: 6.8, delay: 3.5, size: 3 },
-    { left: 95, color: '#f39c12', dur: 9.2, delay: 1.4, size: 2 },
-    { left: 30, color: '#ff4fa3', dur: 7.8, delay: 4.8, size: 3 },
-    { left: 82, color: '#f1c40e', dur: 8.3, delay: 2.0, size: 2 },
-    { left: 48, color: '#7a00cc', dur: 11.0,delay: 0.3, size: 4 },
+    { left: 8,  color: 'rgba(241,196,14,0.8)', dur: 7.0, delay: 0.0, size: 4 },
+    { left: 35, color: 'rgba(51,152,219,0.8)', dur: 8.0, delay: 3.1, size: 5 },
+    { left: 63, color: 'rgba(46,204,112,0.8)', dur: 10.0,delay: 2.3, size: 4 },
+    { left: 88, color: 'rgba(241,196,14,0.8)', dur: 8.5, delay: 1.8, size: 4 },
+    { left: 15, color: 'rgba(122,0,204,0.8)',  dur: 9.0, delay: 5.0, size: 3 },
+    { left: 42, color: 'rgba(231,77,60,0.8)',  dur: 7.2, delay: 2.7, size: 5 },
+    { left: 70, color: 'rgba(46,204,112,0.8)', dur: 6.8, delay: 3.5, size: 4 },
+    { left: 30, color: 'rgba(255,79,163,0.8)', dur: 7.8, delay: 4.8, size: 4 },
+    { left: 82, color: 'rgba(241,196,14,0.8)', dur: 8.3, delay: 2.0, size: 3 }
   ].map(p => (
     <span
       class="particle"
-      style={`
-        left:${p.left}%;
-        background:${p.color};
-        width:${p.size}px;
-        height:${p.size}px;
-        animation-duration:${p.dur}s;
-        animation-delay:${p.delay}s;
-        box-shadow: 0 0 ${p.size * 3}px ${p.color};
-      `}
+      style={`left:${p.left}%;background:${p.color};width:${p.size}px;height:${p.size}px;animation-duration:${p.dur}s;animation-delay:${p.delay}s;`}
     />
   ))}
 
-  <!-- Confeti: formas variadas que caen con drift lateral — más festivo, menos genérico -->
+  <!-- Confeti que cae -->
   {[
-    { left: 5,  color: '#e74d3c', dur: 8.0, delay: 0.0,  shape: 'square',   size: 7,  drift:  40 },
-    { left: 12, color: '#f1c40e', dur: 6.5, delay: 2.1,  shape: 'circle',   size: 5,  drift: -30 },
-    { left: 20, color: '#2ecc70', dur: 9.0, delay: 0.8,  shape: 'square',   size: 8,  drift:  55 },
-    { left: 28, color: '#3398db', dur: 7.0, delay: 3.5,  shape: 'ribbon',   size: 4,  drift: -45 },
-    { left: 38, color: '#f39c12', dur: 8.5, delay: 1.3,  shape: 'circle',   size: 6,  drift:  35 },
-    { left: 45, color: '#7a00cc', dur: 6.0, delay: 4.2,  shape: 'square',   size: 7,  drift: -60 },
-    { left: 53, color: '#ff4fa3', dur: 9.5, delay: 0.5,  shape: 'ribbon',   size: 4,  drift:  50 },
-    { left: 62, color: '#e74d3c', dur: 7.5, delay: 2.8,  shape: 'circle',   size: 5,  drift: -35 },
-    { left: 70, color: '#f1c40e', dur: 8.2, delay: 1.6,  shape: 'square',   size: 9,  drift:  45 },
-    { left: 78, color: '#2ecc70', dur: 6.8, delay: 3.9,  shape: 'circle',   size: 6,  drift: -50 },
-    { left: 85, color: '#3398db', dur: 9.2, delay: 0.2,  shape: 'ribbon',   size: 4,  drift:  30 },
-    { left: 92, color: '#f39c12', dur: 7.8, delay: 4.6,  shape: 'square',   size: 7,  drift: -40 },
-    { left: 16, color: '#ff4fa3', dur: 10.0,delay: 1.0,  shape: 'circle',   size: 5,  drift:  60 },
-    { left: 33, color: '#7a00cc', dur: 7.2, delay: 5.1,  shape: 'square',   size: 8,  drift: -25 },
-    { left: 57, color: '#e74d3c', dur: 8.7, delay: 2.4,  shape: 'ribbon',   size: 4,  drift:  40 },
-    { left: 74, color: '#f1c40e', dur: 6.3, delay: 3.2,  shape: 'circle',   size: 6,  drift: -55 },
-    { left: 88, color: '#2ecc70', dur: 9.8, delay: 0.7,  shape: 'square',   size: 7,  drift:  35 },
-    { left: 3,  color: '#3398db', dur: 7.4, delay: 4.0,  shape: 'circle',   size: 5,  drift: -30 },
-  ].map((p, i) => (
+    { left: 12, color: '#f1c40e', dur: 6.5, delay: 2.1, shape: 'circle', size: 5, drift: -30 },
+    { left: 20, color: '#2ecc70', dur: 9.0, delay: 0.8, shape: 'square', size: 8, drift:  55 },
+    { left: 28, color: '#3398db', dur: 7.0, delay: 3.5, shape: 'ribbon', size: 4, drift: -45 },
+    { left: 45, color: '#7a00cc', dur: 6.0, delay: 4.2, shape: 'square', size: 7, drift: -60 },
+    { left: 53, color: '#ff4fa3', dur: 9.5, delay: 0.5, shape: 'ribbon', size: 4, drift:  50 },
+    { left: 62, color: '#e74d3c', dur: 7.5, delay: 2.8, shape: 'circle', size: 5, drift: -35 },
+    { left: 70, color: '#f1c40e', dur: 8.2, delay: 1.6, shape: 'square', size: 9, drift:  45 },
+    { left: 85, color: '#3398db', dur: 9.2, delay: 0.2, shape: 'ribbon', size: 4, drift:  30 },
+    { left: 92, color: '#f39c12', dur: 7.8, delay: 4.6, shape: 'square', size: 7, drift: -40 },
+    { left: 16, color: '#ff4fa3', dur: 10.0,delay: 1.0, shape: 'circle', size: 5, drift:  60 },
+    { left: 57, color: '#e74d3c', dur: 8.7, delay: 2.4, shape: 'ribbon', size: 4, drift:  40 },
+    { left: 74, color: '#f1c40e', dur: 6.3, delay: 3.2, shape: 'circle', size: 6, drift: -55 },
+  ].map((p) => (
     <span
       class="confetti-piece"
       style={`
@@ -111,7 +74,6 @@
         animation-duration:${p.dur}s;
         animation-delay:${p.delay}s;
         --drift:${p.drift}px;
-        opacity:0.82;
       `}
     />
   ))}
@@ -129,334 +91,139 @@
     background: #080010;
   }
 
-  /* ── Halos difusos — la magia principal ────────────────────────
-     Nada de líneas. Todo son elipses grandes con blur enorme.
-     Dan la sensación de que hay luz detrás de la TV sin ser obvios.
-  ─────────────────────────────────────────────────────────────── */
-  
-Conversación con Gemini
-Eres un experto en diseño UX/UI, marketing digital y desarrollo de landing pages.
-
-
-
-Chat, existe una serie que se volvió famosa llamada: "El Circo Digital".
-
-Recuerdo que cuando salia un nuevo capitulo, solian colocar tipo adelantos o similares en su pagina de: https://www.thewackywatch.com/
-
-Actualmente solo podemos ver el png de la television. Pero quisiera replicarlo y crear una pagina web similar a esta. Pero tipo agregando destellos o animaciones por detras para tensión, pero teniendo la tematica de el circo digital.
-
-El porque es porque se tendra un evento de un show de El circo digital para todo publico, tenemos este contexto:
-
-[18:50, 6/25/2026] Yael Chino Thunder: ⭐DATOS⭐
-
-🎪EVENTO : DIGITAL SHOW
-
-📅 FECHA: 05 DE JULIO
-
-🕐HORA: 5:00 pm (única funcion)
-
-📍 LUGAR: CAMARA NACIONAL DE COMERCIO
-
-(a 2 cuadras de obelisco)
-
-⭐INCLUYE⭐
-
-🎈Show apto para todo público 🎭
-
-🎈Fotos con los personajes
-
-🎈 Música y baile
-
-🎈Escenografía
-
-🎈 Stans de productos de la serie
-
-🎈 Show interactivo
-
-🎈 Juegos y actividad
-
-🎈SORTEO Y MUCHAS SORPRESAS MAS.
-
-⬇️⭐COSAS A MENCIONAR⭐⬇️
-
-📍Asegura tu asiento porque las entradas son limitadas
-
-📍 Tendremos premios y sorpresas para aquellos que vengan con su cosplay con la temática de Digital Circus
-
-📍 Apto para todo público
-
-📍🎟️ Reserva de entradas y información al: 71505241
-
-📍Única funcion
-
-[18:51, 6/25/2026] Yael Chino Thunder: Y aqui te dejo unos videos referenciales para que los puedas usar en tu publicación
-
-Como falta pocos dias, quiero generar tension a las personas o tener mas referencias acerca de el circo digital.
-
-Que ideas mas me sugieres?
-
-
-
-Pensaba tener esa pagina con la tv que muestre tipo: Faltan 8 dias...
-
-Tambien que dar pistas o hacer una dinamica y regalar tipo entradas gratis
-
-Pensaba hacer tipo la pagina de "Elige a tu personaje favorito" que alguna vez tambien estaba en esta pagina.
-
-
-
-Ya tengo el sistema creado. Y quisiera primero mejorar el index.
-
-
-
-Pero tengo un problema con la animacion, se mueve raro el fondo, los destellos. Ese caso quisiera mejorar
-
-¡Qué excelente iniciativa! Replicar la atmósfera de The Wacky Watch para el evento presencial del 05 de Julio es una estrategia de marketing brillante. Tienes un stack muy sólido y moderno con Astro y Vue 3, perfecto para lograr interfaces inmersivas y un rendimiento óptimo.
-
-Vamos a resolver primero el problema técnico del fondo y luego pasaremos a las estrategias de UX para generar tensión y hype.
-
-1. Solución al "Fondo Raro" (Rendimiento de Animaciones)
-El problema de que los destellos y el fondo se muevan "raro" (con saltos, parpadeos o lentitud) se debe a un cuello de botella clásico en el renderizado del navegador (la GPU).
-
-Revisando tu componente AmbientBg.astro, el culpable principal es esta regla en la clase .halo:
-filter: blur(80px);.  
-Desconocido
-
-Aplicar un desenfoque tan masivo a elementos que ocupan hasta el 70vw de la pantalla y que además están siendo animados con transform y opacity, satura la capacidad gráfica del dispositivo.  
-Desconocido
-
-La solución:
-Elimina el filter: blur() por completo. Dado que ya estás utilizando radial-gradient con transiciones hacia transparent 70% en tus halos, el desenfoque del CSS es redundante. Los gradientes por sí solos ya tienen bordes suaves y consumen muchísimos menos recursos.  
-Desconocido
-
-Actualiza tus estilos base en AmbientBg.astro de esta manera:
-
-CSS
+  /* ── Halos difusos ── */
   .halo {
     position: absolute;
     border-radius: 50%;
     will-change: transform, opacity;
-    transform: translateZ(0); 
+    transform: translateZ(0); /* Aceleración GPU estricta */
   }
 
-  /* Halo morado-púrpura central: pulsa lentamente */
   .halo-center {
-    width: 70vw;
-    height: 50vh;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: radial-gradient(
-      ellipse at center,
-      rgba(122, 0, 204, 0.22) 0%,
-      rgba(60, 0, 100, 0.12)  40%,
-      transparent 70%
-    );
+    width: 70vw; height: 50vh; top: 15%; left: 50%;
+    margin-left: -35vw; /* Mejor que translateX para combinar con animaciones */
+    background: radial-gradient(ellipse at center, rgba(122, 0, 204, 0.22) 0%, rgba(60, 0, 100, 0.12) 40%, transparent 70%);
     animation: halo-breathe 8s ease-in-out infinite;
   }
 
-  /* Halo rojo izquierda — como un foco de escenario difuso */
   .halo-left {
-    width: 45vw;
-    height: 60vh;
-    top: -5%;
-    left: -8%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(231, 77, 60, 0.12) 0%,
-      rgba(243, 156, 18, 0.06) 50%,
-      transparent 70%
-    );
-    animation: halo-breathe 11s ease-in-out infinite 2s;
+    width: 45vw; height: 60vh; top: -5%; left: -8%;
+    background: radial-gradient(ellipse at center, rgba(231, 77, 60, 0.12) 0%, rgba(243, 156, 18, 0.06) 50%, transparent 70%);
+    animation: halo-side-breathe 11s ease-in-out infinite 2s;
   }
 
-  /* Halo azul derecha */
   .halo-right {
-    width: 45vw;
-    height: 60vh;
-    top: -5%;
-    right: -8%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(51, 152, 219, 0.12) 0%,
-      rgba(46, 204, 112, 0.06) 50%,
-      transparent 70%
-    );
-    animation: halo-breathe 9s ease-in-out infinite 4s;
+    width: 45vw; height: 60vh; top: -5%; right: -8%;
+    background: radial-gradient(ellipse at center, rgba(51, 152, 219, 0.12) 0%, rgba(46, 204, 112, 0.06) 50%, transparent 70%);
+    animation: halo-side-breathe 9s ease-in-out infinite 4s;
   }
 
   @keyframes halo-breathe {
-    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-    50%       { opacity: 1.0; transform: translateX(-50%) scale(1.08); }
+    0%, 100% { opacity: 0.7; transform: translateZ(0) scale(1); }
+    50%       { opacity: 1.0; transform: translateZ(0) scale(1.08); }
   }
-
-  /* Variantes sin translateX para los laterales */
-  .halo-left,
-  .halo-right {
-    transform: none;
-  }
-  .halo-left  { animation-name: halo-side-breathe; }
-  .halo-right { animation-name: halo-side-breathe; }
 
   @keyframes halo-side-breathe {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50%       { opacity: 0.9; transform: scale(1.1); }
+    0%, 100% { opacity: 0.6; transform: translateZ(0) scale(1); }
+    50%       { opacity: 0.9; transform: translateZ(0) scale(1.1); }
   }
 
-  /* ── Conos de luz — ANCHOS y difusos, como luces de circo reales ──
-     No son líneas. Son triángulos/conos con gradiente y blur.
-  ────────────────────────────────────────────────────────────────── */
+  /* ── Conos de luz (Reescritos con Radial-Gradient en vez de Clip-path+Blur) ── */
   .cone {
     position: absolute;
-    top: 0;
+    top: -10%; /* Lo subimos un poco para ocultar el origen */
     transform-origin: top center;
-    filter: blur(18px);    /* blur = sin bordes tajantes */
     will-change: transform, opacity;
+    transform: translateZ(0); /* Aceleración GPU */
   }
 
-  /* Cono izquierdo amarillo */
   .cone-l1 {
-    left: 8%;
-    width: 180px;
-    height: 55vh;
-    background: linear-gradient(
-      to bottom,
-      rgba(241, 196, 14, 0.28) 0%,
-      rgba(243, 156, 18, 0.08) 60%,
-      transparent 100%
-    );
-    clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
+    left: -10%; width: 50vw; height: 70vh;
+    background: radial-gradient(ellipse at 50% 10%, rgba(241, 196, 14, 0.18) 0%, transparent 60%);
     animation: cone-sway 9s ease-in-out infinite;
-    --sway: -12deg;
-    --sway-end: -4deg;
+    --sway: -12deg; --sway-end: -4deg;
   }
 
-  /* Cono izquierdo rojo — ligeramente detrás */
   .cone-l2 {
-    left: 14%;
-    width: 140px;
-    height: 45vh;
-    background: linear-gradient(
-      to bottom,
-      rgba(231, 77, 60, 0.2) 0%,
-      transparent 100%
-    );
-    clip-path: polygon(35% 0%, 65% 0%, 100% 100%, 0% 100%);
+    left: 0%; width: 40vw; height: 60vh;
+    background: radial-gradient(ellipse at 50% 10%, rgba(231, 77, 60, 0.15) 0%, transparent 55%);
     animation: cone-sway 12s ease-in-out infinite 3s;
-    --sway: -8deg;
-    --sway-end: 2deg;
+    --sway: -8deg; --sway-end: 2deg;
   }
 
-  /* Cono derecho azul */
   .cone-r1 {
-    right: 8%;
-    width: 180px;
-    height: 55vh;
-    background: linear-gradient(
-      to bottom,
-      rgba(51, 152, 219, 0.25) 0%,
-      rgba(46, 204, 112, 0.06) 60%,
-      transparent 100%
-    );
-    clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
+    right: -10%; width: 50vw; height: 70vh;
+    background: radial-gradient(ellipse at 50% 10%, rgba(51, 152, 219, 0.18) 0%, transparent 60%);
     animation: cone-sway 10s ease-in-out infinite 1.5s;
-    --sway: 4deg;
-    --sway-end: 14deg;
+    --sway: 4deg; --sway-end: 14deg;
   }
 
-  /* Cono derecho rosa */
   .cone-r2 {
-    right: 15%;
-    width: 130px;
-    height: 42vh;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 79, 163, 0.18) 0%,
-      transparent 100%
-    );
-    clip-path: polygon(35% 0%, 65% 0%, 100% 100%, 0% 100%);
+    right: 5%; width: 40vw; height: 60vh;
+    background: radial-gradient(ellipse at 50% 10%, rgba(255, 79, 163, 0.15) 0%, transparent 55%);
     animation: cone-sway 13s ease-in-out infinite 5s;
-    --sway: 2deg;
-    --sway-end: 12deg;
+    --sway: 2deg; --sway-end: 12deg;
   }
 
-  /* Cono central — apunta directo a la TV */
   .cone-top {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 220px;
-    height: 48vh;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.06) 0%,
-      rgba(241, 196, 14, 0.04) 50%,
-      transparent 100%
-    );
-    clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+    left: 50%; margin-left: -25vw; width: 50vw; height: 65vh;
+    background: radial-gradient(ellipse at 50% 10%, rgba(255, 255, 255, 0.08) 0%, rgba(241, 196, 14, 0.03) 40%, transparent 65%);
     animation: cone-center-breathe 7s ease-in-out infinite;
   }
 
   @keyframes cone-sway {
-    0%, 100% { transform: rotate(var(--sway));     opacity: 0.7; }
-    50%       { transform: rotate(var(--sway-end)); opacity: 1.0; }
+    0%, 100% { transform: translateZ(0) rotate(var(--sway)); opacity: 0.7; }
+    50%       { transform: translateZ(0) rotate(var(--sway-end)); opacity: 1.0; }
   }
 
   @keyframes cone-center-breathe {
-    0%, 100% { opacity: 0.5; transform: translateX(-50%) scaleX(1); }
-    50%       { opacity: 0.9; transform: translateX(-50%) scaleX(1.15); }
+    0%, 100% { opacity: 0.5; transform: translateZ(0) scaleX(1); }
+    50%       { opacity: 0.9; transform: translateZ(0) scaleX(1.15); }
   }
 
   /* ── Estrellas ── */
   .star {
     position: absolute;
     border-radius: 50%;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.8);
+    /* Sombras simplificadas estáticas */
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
     animation: star-twinkle var(--dur, 2.5s) ease-in-out infinite;
   }
 
-  /* Estrellas con su propio glow suave */
-  .star--glow {
-    box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.6);
-  }
-
   @keyframes star-twinkle {
-    0%, 100% { opacity: 0.1; transform: scale(0.7); }
-    40%       { opacity: 0.9; transform: scale(1.2); }
-    60%       { opacity: 0.7; transform: scale(1.0); }
+    0%, 100% { opacity: 0.2; transform: scale(0.7); }
+    50%       { opacity: 1; transform: scale(1.1); }
   }
 
-  /* ── Partículas de luz ascendentes ── */
-  .particle {
+  /* ── Partículas y Confeti (SIN will-change para no asfixiar la memoria RAM) ── */
+  .particle, .confetti-piece {
     position: absolute;
+  }
+
+  .particle {
     bottom: -8px;
     border-radius: 50%;
     animation: particle-rise linear infinite;
   }
 
   @keyframes particle-rise {
-    0%   { transform: translateY(0)      translateX(0)   scale(1);   opacity: 0; }
-    10%  { opacity: 0.9; }
-    80%  { opacity: 0.6; }
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    10%  { opacity: 1; }
+    80%  { opacity: 0.5; }
     100% { transform: translateY(-100vh) translateX(20px) scale(0.3); opacity: 0; }
   }
 
-  /* ── Confeti con drift lateral natural ── */
   .confetti-piece {
-    position: absolute;
     top: -16px;
+    opacity: 0.8;
     animation: confetti-drift linear infinite;
   }
 
   @keyframes confetti-drift {
-    0%   {
-      transform: translateY(0)    translateX(0)               rotate(0deg);
-      opacity: 0;
-    }
-    5%   { opacity: 0.85; }
-    85%  { opacity: 0.7; }
-    100% {
-      transform: translateY(105vh) translateX(var(--drift, 40px)) rotate(540deg);
-      opacity: 0;
-    }
+    0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    5%   { opacity: 1; }
+    85%  { opacity: 0.8; }
+    100% { transform: translateY(105vh) translateX(var(--drift, 40px)) rotate(540deg); opacity: 0; }
   }
 </style>

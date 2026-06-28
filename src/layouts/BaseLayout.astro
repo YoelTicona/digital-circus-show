@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import AudioPlayer from '../components/AudioPlayer.astro' // <-- IMPORTA EL COMPONENTE
 
 interface Props {
   title?: string
@@ -7,7 +8,7 @@ interface Props {
 }
 
 const {
-  title = 'The Amazing Digital Circus — Show en Vivo',
+  title = 'El Asombroso Circo Digital — Show en Vivo',
   description = 'El show más esperado llega a Bolivia. 05 de Julio · 5:00 PM · Cámara Nacional de Comercio.',
 } = Astro.props
 ---
@@ -33,5 +34,6 @@ const {
   </head>
   <body>
     <slot />
+    <AudioPlayer />
   </body>
 </html>

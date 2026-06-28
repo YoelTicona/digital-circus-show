@@ -1,0 +1,209 @@
+---
+// FloatingBanner.astro
+// Modal de impacto visual basado en el diseño estructurado: Texto -> Logo -> Urgencia
+---
+
+<div id="circus-modal-banner" class="banner-wrapper">
+  <div class="floating-banner font-display">
+    
+    <div class="close-hint" aria-hidden="true">✕</div>
+
+    <h2 class="top-text">
+      El show del asombroso<br/>
+      <span class="text-circus-blue highlight">Circo Digital</span>
+    </h2>
+
+    <div class="logo-container">
+      <img 
+        src="/images/logo-digital-circus.png" 
+        alt="Logo El Asombroso Circo Digital" 
+        class="banner-logo"
+        draggable="false"
+      />
+    </div>
+
+    <p class="bottom-text text-circus-yellow">
+      ¡¡YA ESTÁ CERCA!!
+    </p>
+
+    <p class="location-badge font-body">
+      📍 La Paz, Bolivia — 05 de Julio
+    </p>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modalWrapper = document.getElementById('circus-modal-banner');
+    const innerBanner = modalWrapper?.querySelector('.floating-banner'); // La caja visible
+    const closeBtn = modalWrapper?.querySelector('.close-hint'); // La 'X'
+
+
+    // 2. Cerrar al hacer clic en la "X"
+    closeBtn?.addEventListener('click', () => {
+      modalWrapper?.classList.remove('is-visible');
+    });
+
+    // 3. Cerrar al hacer clic fuera de la caja principal (en el fondo oscuro)
+    document.addEventListener('click', (e) => {
+      if (modalWrapper?.classList.contains('is-visible')) {
+        if (innerBanner && !innerBanner.contains(e.target as Node)) {
+          modalWrapper.classList.remove('is-visible');
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  /* ── Contenedor Modal (Oscurece el resto de la pantalla sutilmente) ── */
+  .banner-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Estado Oculto */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    background: rgba(8, 0, 16, 0.4); /* Fondo oscuro general (Overlay) */
+    backdrop-filter: blur(4px);
+    transition: all 0.4s ease;
+  }
+
+  /* Estado Visible */
+  .banner-wrapper.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; 
+  }
+
+  /* ── Estilos del Cartel (Diseño Glassmorphism + Neón) ── */
+  .floating-banner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(1rem, 3vh, 1.5rem);
+    
+    /* Dimensiones responsivas */
+    width: 90%;
+    max-width: 450px;
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem);
+    
+    /* Fondo oscuro con opacidad (UX/UI Glassmorphism) */
+    background: rgba(14, 0, 25, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    /* Bordes amarillos llamativos */
+    border: 3px solid var(--circus-yellow);
+    border-radius: 24px;
+    
+    /* Resplandor exterior e interior */
+    box-shadow: 
+      0 15px 35px rgba(0, 0, 0, 0.8),
+      0 0 20px rgba(241, 196, 14, 0.5),
+      inset 0 0 15px rgba(241, 196, 14, 0.2);
+      
+    /* Animación de entrada y flotación */
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  /* Cuando el modal está visible, el cartel salta a su posición */
+  .banner-wrapper.is-visible .floating-banner {
+    transform: translateY(0) scale(1);
+    animation: neon-pulse 3s infinite alternate ease-in-out;
+  }
+
+  /* ── Elementos Internos ── */
+  .close-hint {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.2rem;
+    font-family: sans-serif;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .close-hint:hover {
+    color: var(--circus-red);
+  }
+
+  .top-text {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    line-height: 1.1;
+    color: #fff;
+    letter-spacing: 0.05em;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+    margin: 0;
+  }
+
+  .highlight {
+    font-size: 1.15em;
+    text-shadow: var(--glow-blue);
+  }
+
+  .logo-container {
+    width: 100%;
+    max-width: 180px; /* Evita que el logo sea gigantesco */
+    margin: 0.5rem 0;
+    /* Efecto de levitación leve en el logo */
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .banner-logo {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+  }
+
+  .bottom-text {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    letter-spacing: 0.1em;
+    margin: 0;
+    /* Efecto de tensión / urgencia */
+    text-shadow: 
+      0 0 15px color-mix(in srgb, var(--circus-yellow) 80%, transparent),
+      3px 3px 0 #7a4400;
+    animation: pulse-glow 1.5s infinite;
+    --glow-color: var(--circus-yellow);
+  }
+
+  .location-badge {
+    margin-top: -0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Keyframes Especiales ── */
+  @keyframes neon-pulse {
+    0% {
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(241, 196, 14, 0.3),
+        inset 0 0 10px rgba(241, 196, 14, 0.1);
+    }
+    100% {
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(241, 196, 14, 0.7),
+        inset 0 0 20px rgba(241, 196, 14, 0.3);
+    }
+  }
+</style>

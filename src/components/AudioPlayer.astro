@@ -1,0 +1,128 @@
+---
+// AudioPlayer.astro
+// Componente global para la música de fondo del circo.
+// Mantiene su estado a través de la API de Audio de HTML5.
+---
+
+<div class="audio-controls">
+  <button id="mute-btn" class="mute-btn" aria-label="Reproducir música de fondo">
+    <!-- Icono de Sonido Apagado (por defecto, porque el autoplay está bloqueado) -->
+    <svg id="icon-muted" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+    
+    <!-- Icono de Sonido Encendido (oculto por defecto) -->
+    <svg id="icon-playing" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    </svg>
+  </button>
+
+  <!-- Elemento de Audio Oculto -->
+  <!-- REEMPLAZA EL SRC CON LA RUTA DE TU ARCHIVO MP3 -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="/audio/your-new-home-dc.m4a" type="audio/x-m4a" />
+  </audio>
+</div>
+
+<script>
+  // Lógica del lado del cliente para manejar el audio
+  document.addEventListener('DOMContentLoaded', () => {
+    const music = document.getElementById('bg-music') as HTMLAudioElement;
+    const btn = document.getElementById('mute-btn');
+    const iconMuted = document.getElementById('icon-muted');
+    const iconPlaying = document.getElementById('icon-playing');
+
+    // Bajamos un poco el volumen para que sea ambiente y no sature
+    if (music) {
+        music.volume = 0.4;
+    }
+
+    // Intentamos reproducir al primer click en CUALQUIER PARTE de la pantalla
+    // (Truco común para saltarse la restricción de autoplay)
+    const playOnInteraction = () => {
+      if (music && music.paused) {
+        music.play().then(() => {
+          updateIcons(false);
+          // Quitamos el listener una vez que ya empezó
+          document.removeEventListener('click', playOnInteraction);
+        }).catch(err => {
+          console.log("Autoplay bloqueado, esperando click en el botón.", err);
+        });
+      }
+    };
+
+    document.addEventListener('click', playOnInteraction, { once: true });
+
+    // Lógica del botón de mute
+    if (btn && music) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Evita que se dispare el listener global del body
+        if (music.paused) {
+          music.play();
+          updateIcons(false);
+        } else {
+          music.pause();
+          updateIcons(true);
+        }
+      });
+    }
+
+    function updateIcons(isMuted: boolean) {
+      if (isMuted) {
+        iconMuted?.classList.remove('hidden');
+        iconPlaying?.classList.add('hidden');
+        btn?.classList.remove('is-playing');
+      } else {
+        iconMuted?.classList.add('hidden');
+        iconPlaying?.classList.remove('hidden');
+        btn?.classList.add('is-playing');
+      }
+    }
+  });
+</script>
+
+<style>
+  .audio-controls {
+    position: fixed;
+    bottom: clamp(1rem, 3vw, 2rem);
+    right: clamp(1rem, 3vw, 2rem);
+    z-index: 100; /* Asegura que esté por encima de todo */
+  }
+
+  .mute-btn {
+    background: rgba(8, 0, 16, 0.6);
+    border: 2px solid var(--circus-purple);
+    color: var(--circus-yellow);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(122, 0, 204, 0.4);
+  }
+
+  .mute-btn:hover {
+    transform: scale(1.1);
+    background: rgba(122, 0, 204, 0.4);
+    box-shadow: var(--glow-purple);
+  }
+
+  /* Animación sutil cuando la música está sonando */
+  .mute-btn.is-playing {
+    border-color: var(--circus-green);
+    color: var(--circus-green);
+    box-shadow: 0 0 15px rgba(46, 204, 112, 0.4);
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>

@@ -3,12 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import AmbientBg  from '../components/AmbientBg.astro'
 import TVScreen   from '../components/TVScreen.astro'
 import Countdown  from '../components/Countdown.vue'
+import FloatingBanner from '../components/FloatingBanner.astro'
 ---
 
 <BaseLayout title="The Amazing Digital Circus — Show en Vivo Bolivia">
 
   <AmbientBg />
-
+  
+  <FloatingBanner />
   <main class="page-tv">
 
     <TVScreen>

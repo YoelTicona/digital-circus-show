@@ -101,7 +101,7 @@ const tvLabel = computed(() => {
 .blocks {
   display: flex;
   align-items: center;
-  gap: clamp(1px, 0.5vw, 1px);
+  gap: clamp(1px, 0.1vw, 1px);
 }
 
 .block {
@@ -111,8 +111,9 @@ const tvLabel = computed(() => {
   background: rgba(255, 255, 255, 0.06);
   border: 1.5px solid rgba(241, 196, 14, 0.25);
   border-radius: 8px;
-  padding: clamp(1px, 1vw, 10px) clamp(1px, 2vw, 16px);
-  min-width: clamp(0.5px, -1vw, 5px);
+  padding: clamp(2px, 1vw, 10px) clamp(4px, 1.5vw, 16px);
+  /* CORRECCIÓN: valor mínimo positivo */
+  min-width: clamp(30px, 10vw, 60px); 
   backdrop-filter: blur(6px);
 }
 

@@ -1,0 +1,168 @@
+---
+// TVScreen.astro
+// Props let pages control the TV content via a named slot.
+// Screen area calibrated to the 986×658 tv-circo-digital.jpg:
+//   The visible screen occupies roughly:
+//   X: 14% → 85%  (left offset ~14%, width ~71%)
+//   Y: 16% → 84%  (top  offset ~16%, height ~68%)
+// These are percentage values relative to the TV image container.
+
+interface Props {
+  /**
+   * Max width of the TV image on screen.
+   * Defaults to responsive: 95vw on mobile, 700px on desktop.
+   */
+  maxWidth?: string
+  /** Extra CSS classes on the outer wrapper */
+  class?: string
+}
+
+const { maxWidth, class: className = '' } = Astro.props
+---
+
+<div class:list={['tv-wrapper', className]} style={maxWidth ? `--tv-max: ${maxWidth}` : ''}>
+  <!-- The TV image -->
+  <img
+    src="/images/tv-circo-digital-on.png"
+    alt="Television del Circo Digital"
+    class="tv-image"
+    draggable="false"
+  />
+
+  <!-- Screen overlay — content injected here -->
+  <div class="tv-screen">
+    <div class="tv-scanlines" aria-hidden="true"></div>
+    <div class="tv-screen-inner">
+      <slot>
+        <!-- Default: static noise until parent injects content -->
+        <div class="tv-static">
+          <span class="font-display text-[var(--circus-yellow)] text-2xl tracking-widest">
+            SEÑAL INTERRUMPIDA...
+          </span>
+        </div>
+      </slot>
+    </div>
+  </div>
+
+  <!-- Decorative glow behind the TV -->
+  <div class="tv-glow" aria-hidden="true"></div>
+</div>
+
+<style>
+  .tv-wrapper {
+    --tv-max: min(95vw, 700px);
+    position: relative;
+    width: var(--tv-max);
+    margin: 0 auto;
+    /* Float suave: menos amplitud, más tiempo, easing más largo */
+    animation: tv-float 6s ease-in-out infinite;
+  }
+
+  @keyframes tv-float {
+    0%,  100% { transform: translateY(0px)   rotate(0deg); }
+    30%        { transform: translateY(-6px)  rotate(0.3deg); }
+    70%        { transform: translateY(-3px)  rotate(-0.2deg); }
+  }
+
+  .tv-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 3;
+    user-select: none;
+    /* Punch up the image colours to match the circus vibe */
+    filter: saturate(1.15) contrast(1.05);
+  }
+
+  /* ── Screen area ────────────────────────────────
+     Calibrated to tv-circo-digital.jpg (986×658):
+     Left edge  ~14% of image width
+     Top  edge  ~16% of image height
+     Width      ~71% of image width
+     Height     ~68% of image height
+     Adjust these four values after you see the image.
+  ─────────────────────────────────────────────── */
+  .tv-screen {
+    position: absolute;
+    top:    25%; 
+    left:   27%;
+    width:  44%;
+    height: 45%;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #000;
+  }
+
+  /* CRT scanlines overlay */
+  .tv-scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.25) 2px,
+      rgba(0, 0, 0, 0.25) 4px
+    );
+    animation: scanline-move 0.4s linear infinite;
+  }
+
+  .tv-screen-inner {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Esto corta todo lo que intente salirse */
+  }
+
+  .tv-screen-inner > :global(*) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Aseguramos que videos, imágenes o iframes se recorten bien sin aplastarse */
+  .tv-screen-inner :global(video),
+  .tv-screen-inner :global(img),
+  .tv-screen-inner :global(iframe) {
+    object-fit: cover;
+    border: none;
+    pointer-events: auto; /* Para que los iframes de YouTube se puedan clickear */
+  }
+
+  /* Default static noise state */
+  .tv-static {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #050005;
+    text-align: center;
+    padding: 1rem;
+    animation: pulse-glow 2s ease-in-out infinite;
+    --glow-color: #f1c40e;
+  }
+
+  /* Glow halo behind the whole TV */
+  .tv-glow {
+    position: absolute;
+    inset: -10%;
+    z-index: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, var(--circus-purple) 25%, transparent) 0%,
+      color-mix(in srgb, var(--circus-red)    10%, transparent) 40%,
+      transparent 80%
+    );
+    animation: pulse-glow 0.5s ease-in-out infinite;
+    --glow-color: transparent;
+  }
+</style>
+

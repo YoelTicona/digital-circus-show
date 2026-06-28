@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ── Circus palette ── */
+    --circus-red:    #e74d3c;
+    --circus-orange: #f39c12;
+    --circus-yellow: #f1c40e;
+    --circus-green:  #2ecc70;
+    --circus-blue:   #3398db;
+
+    /* ── Extended palette ── */
+    --circus-purple: #7a00cc;
+    --circus-pink:   #ff4fa3;
+    --circus-dark:   #080010;
+    --circus-dark-2: #140025;
+
+    /* ── Typography ── */
+    --font-display: 'Bangers', cursive;
+    --font-body:    'Nunito', sans-serif;
+
+    /* ── Glow shortcuts ── */
+    --glow-red:    0 0 20px color-mix(in srgb, var(--circus-red) 60%, transparent);
+    --glow-yellow: 0 0 20px color-mix(in srgb, var(--circus-yellow) 60%, transparent);
+    --glow-blue:   0 0 20px color-mix(in srgb, var(--circus-blue) 60%, transparent);
+    --glow-purple: 0 0 30px color-mix(in srgb, var(--circus-purple) 60%, transparent);
+  }
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background: var(--circus-dark);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--circus-dark); }
+::-webkit-scrollbar-thumb {
+  background: var(--circus-purple);
+  border-radius: 3px;
+}
+
+/* ────────────────────────────────────────
+   ANIMATIONS — all pages share these
+   ──────────────────────────────────────── */
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50%       { opacity: 1;    transform: scale(1.3); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-10px) rotate(1deg); }
+  66%       { transform: translateY(-4px) rotate(-1deg); }
+}
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(-10px) rotate(0deg);   opacity: 0.9; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes spotlight-sweep {
+  0%, 100% { opacity: 0.25; transform: rotate(var(--angle-start)); }
+  50%       { opacity: 0.6;  transform: rotate(var(--angle-end)); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.02); }
+}
+
+@keyframes scanline-move {
+  from { transform: translateY(0); }
+  to   { transform: translateY(4px); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-100%); }
+}
+
+/* ── Utility classes used across pages ── */
+.font-display { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
+
+.text-circus-red    { color: var(--circus-red); }
+.text-circus-orange { color: var(--circus-orange); }
+.text-circus-yellow { color: var(--circus-yellow); }
+.text-circus-green  { color: var(--circus-green); }
+.text-circus-blue   { color: var(--circus-blue); }
+.text-circus-purple { color: var(--circus-purple); }
+.text-circus-pink   { color: var(--circus-pink); }
+
+.bg-circus-dark   { background: var(--circus-dark); }
+.bg-circus-dark-2 { background: var(--circus-dark-2); }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

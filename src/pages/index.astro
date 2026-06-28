@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import AmbientBg  from '../components/AmbientBg.astro'
+import TVScreen   from '../components/TVScreen.astro'
+import Countdown  from '../components/Countdown.vue'
+---
+
+<BaseLayout title="The Amazing Digital Circus — Show en Vivo Bolivia">
+
+  <AmbientBg />
+
+  <main class="page-tv">
+
+    <TVScreen>
+      <!--
+        SLOT — TV screen content.
+        Swap with any of:
+          · <img src="/images/teaser.gif" />          teaser GIF
+          · <video autoplay muted loop playsinline>   video clip
+          · <iframe src="youtube-embed-url">          YT embed
+        Default: reactive countdown.
+      -->
+      <Countdown client:load />
+    </TVScreen>
+
+    <a href="/show" class="scroll-hint font-display" aria-label="Ver info del show">
+      <span class="scroll-hint__text">VER EL SHOW</span>
+      <span class="scroll-hint__arrow" aria-hidden="true">↓</span>
+    </a>
+
+  </main>
+
+</BaseLayout>
+
+<style>
+  .page-tv {
+    position: relative;
+    z-index: 1;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 2rem);
+    gap: clamp(1.5rem, 4vh, 2.5rem);
+  }
+
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.2s;
+  }
+  .scroll-hint:hover { color: var(--circus-yellow); }
+
+  .scroll-hint__text {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .scroll-hint__arrow {
+    font-size: 1.2rem;
+    animation: float 2s ease-in-out infinite;
+  }
+</style>
